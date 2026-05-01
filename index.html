@@ -5,7 +5,516 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>JAMTIRES — Pairing</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style><!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JAMTIRES — Pairing</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
+:root{--bg:#0e0f11;--surface:#16181c;--surface2:#1e2026;--border:#2a2d35;--accent:#f0c040;--accent2:#4fc8a0;--danger:#f06060;--text:#e8eaf0;--text2:#8a8fa0;--text3:#555a6a;--radius:10px;--font-display:'Syne',sans-serif;--font-mono:'DM Mono',monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font-display);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(240,192,64,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(240,192,64,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+.app{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:24px 16px 60px}
+
+/* LOGIN */
+.login-overlay{position:fixed;inset:0;background:var(--bg);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px 32px;width:100%;max-width:400px;text-align:center}
+.login-logo{font-size:28px;font-weight:800;color:var(--accent);margin-bottom:6px}
+.login-sub{font-size:13px;color:var(--text2);margin-bottom:32px}
+.login-title{font-size:14px;font-weight:600;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:16px}
+.user-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.user-btn{padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:var(--font-display);font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s}
+.user-btn:hover{border-color:var(--accent);color:var(--accent)}
+.user-btn.selected{background:rgba(240,192,64,0.1);border-color:var(--accent);color:var(--accent)}
+.divider{display:flex;align-items:center;gap:10px;margin-bottom:16px;color:var(--text3);font-size:12px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.new-user-row{display:flex;gap:8px}
+.new-user-input{flex:1;height:40px;padding:0 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-display);font-size:13px}
+.new-user-input:focus{outline:none;border-color:var(--accent)}
+.btn-add-user{height:40px;padding:0 16px;background:var(--accent);color:var(--bg);border:none;border-radius:8px;font-family:var(--font-display);font-size:13px;font-weight:700;cursor:pointer}
+.btn-login{width:100%;height:44px;margin-top:20px;background:var(--accent);color:var(--bg);border:none;border-radius:8px;font-family:var(--font-display);font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s}
+.btn-login:hover{background:#f5d060}
+.btn-login:disabled{opacity:0.3;cursor:not-allowed}
+
+/* HEADER */
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;padding-bottom:20px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:12px}
+.logo{font-size:22px;font-weight:800;letter-spacing:-0.5px;color:var(--accent)}
+.logo span{color:var(--text2);font-weight:400;font-size:13px;display:block;letter-spacing:0.5px;margin-top:2px}
+.header-right{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.sync-status{font-family:var(--font-mono);font-size:11px;color:var(--text3);display:flex;align-items:center;gap:6px}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--text3)}
+.sync-dot.ok{background:var(--accent2)}
+.sync-dot.syncing{background:var(--accent);animation:blink 0.8s infinite}
+.sync-dot.error{background:var(--danger)}
+.user-badge{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:6px 14px}
+.user-avatar{width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--bg);font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.user-name{font-size:13px;font-weight:600;color:var(--text)}
+.btn-logout{background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:18px;line-height:1;padding:0 0 0 4px}
+.btn-logout:hover{color:var(--danger)}
+
+.alert-banner{border-radius:var(--radius);padding:14px 20px;margin-bottom:24px;display:flex;align-items:center;gap:12px;font-size:14px;font-weight:600;border:1px solid;transition:all 0.4s;cursor:pointer}
+.alert-banner.none{background:var(--surface);border-color:var(--border);color:var(--text3)}
+.alert-banner.match{background:rgba(240,192,64,0.1);border-color:var(--accent);color:var(--accent);animation:pulse-border 2s ease-in-out infinite}
+@keyframes pulse-border{0%,100%{box-shadow:0 0 0 0 rgba(240,192,64,0.3)}50%{box-shadow:0 0 0 6px rgba(240,192,64,0)}}
+.alert-dot{width:10px;height:10px;border-radius:50%;background:currentColor;flex-shrink:0}
+.alert-banner.match .alert-dot{animation:blink 1s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+
+.tabs{display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:4px;margin-bottom:24px}
+.tab{flex:1;padding:9px;font-family:var(--font-display);font-size:13px;font-weight:600;border:none;border-radius:7px;cursor:pointer;background:transparent;color:var(--text2);transition:all 0.2s;letter-spacing:0.3px}
+.tab.active{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.tab .badge{display:inline-block;background:var(--accent);color:var(--bg);font-size:10px;font-weight:700;border-radius:10px;padding:1px 6px;margin-left:6px}
+.panel{display:none}.panel.active{display:block}
+
+.form-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+.form-title{font-size:13px;font-weight:600;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:20px}
+.form-grid{display:grid;gap:14px}
+.form-row2{grid-template-columns:1fr 1fr}
+.form-row4{grid-template-columns:1fr 1fr 1fr 1fr}
+@media(max-width:600px){.form-row2,.form-row4{grid-template-columns:1fr 1fr}}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--text3);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px}
+.field select{width:100%;height:40px;padding:0 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-mono);font-size:13px;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238a8fa0' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;transition:border-color 0.2s;cursor:pointer}
+.field select:focus{outline:none;border-color:var(--accent)}
+.field select:disabled{opacity:0.3;cursor:not-allowed}
+.btn-add{width:100%;height:44px;margin-top:8px;background:var(--accent);color:var(--bg);border:none;border-radius:8px;font-family:var(--font-display);font-size:14px;font-weight:700;cursor:pointer;letter-spacing:0.5px;transition:all 0.2s}
+.btn-add:hover{background:#f5d060;transform:translateY(-1px)}
+
+.stock-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.stock-count{font-size:12px;color:var(--text2);font-family:var(--font-mono)}
+.stock-list{display:flex;flex-direction:column;gap:8px}
+.stock-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;transition:border-color 0.2s}
+.stock-item.has-match{border-color:var(--accent2);background:rgba(79,200,160,0.05)}
+.stock-item-left{flex:1;min-width:0}
+.stock-item-brand{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
+.stock-item-specs{font-family:var(--font-mono);font-size:11px;color:var(--text2)}
+.stock-item-user{font-size:11px;color:var(--text3);margin-top:3px}
+.stock-item-right{display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end}
+.pill{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:0.5px}
+.pill-user{background:rgba(240,192,64,0.1);color:var(--accent);border:1px solid rgba(240,192,64,0.2)}
+.pill-ete{background:rgba(240,192,64,0.1);color:var(--accent);border:1px solid rgba(240,192,64,0.2)}
+.pill-hiver{background:rgba(100,160,255,0.1);color:#88aaff;border:1px solid rgba(100,160,255,0.2)}
+.pill-4s{background:rgba(79,200,160,0.1);color:var(--accent2);border:1px solid rgba(79,200,160,0.2)}
+.pill-match{background:rgba(79,200,160,0.15);color:var(--accent2);border:1px solid rgba(79,200,160,0.3)}
+.btn-del{width:28px;height:28px;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--text3);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0}
+.btn-del:hover{border-color:var(--danger);color:var(--danger)}
+
+.pairs-list{display:flex;flex-direction:column;gap:12px}
+.pair-card{background:var(--surface);border:1px solid var(--accent);border-radius:var(--radius);padding:16px 18px;position:relative;overflow:hidden}
+.pair-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent)}
+.pair-card.validated{border-color:var(--accent2)}.pair-card.validated::before{background:var(--accent2)}
+.pair-card.rejected{border-color:var(--border);opacity:0.5}.pair-card.rejected::before{background:var(--text3)}
+.pair-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.pair-brand{font-size:15px;font-weight:700}
+.pair-specs{font-family:var(--font-mono);font-size:12px;color:var(--text2);margin-top:3px}
+.pair-locations{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.pair-loc{font-family:var(--font-mono);font-size:11px;padding:5px 10px;border-radius:6px;border:1px solid var(--border);color:var(--text2);background:var(--surface2)}
+.pair-actions{display:flex;gap:8px}
+.btn-validate,.btn-reject{flex:1;height:34px;border-radius:7px;font-family:var(--font-display);font-size:12px;font-weight:700;cursor:pointer;border:1px solid;letter-spacing:0.3px;transition:all 0.2s}
+.btn-validate{background:rgba(79,200,160,0.1);color:var(--accent2);border-color:rgba(79,200,160,0.3)}
+.btn-validate:hover,.btn-validate.active{background:var(--accent2);color:var(--bg)}
+.btn-reject{background:rgba(240,96,96,0.1);color:var(--danger);border-color:rgba(240,96,96,0.3)}
+.btn-reject:hover,.btn-reject.active{background:var(--danger);color:#fff}
+
+.empty{text-align:center;padding:48px 24px;color:var(--text3);font-size:13px}
+.empty-icon{font-size:32px;margin-bottom:12px}
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap}
+.filter-btn{padding:6px 14px;border-radius:20px;font-family:var(--font-display);font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text2);transition:all 0.2s}
+.filter-btn.active{background:var(--surface2);color:var(--text);border-color:var(--text3)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 20px;font-size:13px;font-weight:600;color:var(--text);z-index:1000;transition:transform 0.3s ease;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.success{border-color:var(--accent2);color:var(--accent2)}
+.toast.error{border-color:var(--danger);color:var(--danger)}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-overlay" id="login-overlay">
+  <div class="login-box">
+    <div class="login-logo">JAMTIRES</div>
+    <div class="login-sub">Système de pairing — Benelux</div>
+    <div class="login-title">Qui êtes-vous ?</div>
+    <div class="user-grid" id="user-grid"></div>
+    <div class="divider">ou</div>
+    <div class="new-user-row">
+      <input class="new-user-input" id="new-user-input" type="text" placeholder="Ajouter un utilisateur..." maxlength="20">
+      <button class="btn-add-user" onclick="ajouterUtilisateur()">+</button>
+    </div>
+    <button class="btn-login" id="btn-login" onclick="seConnecter()" disabled>Continuer →</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="main-app" style="display:none">
+  <div class="header">
+    <div class="logo">JAMTIRES<span>SYSTÈME DE PAIRING — BENELUX</span></div>
+    <div class="header-right">
+      <div class="sync-status"><div class="sync-dot syncing" id="sync-dot"></div><span id="sync-text">Connexion...</span></div>
+      <div class="user-badge">
+        <div class="user-avatar" id="user-avatar"></div>
+        <span class="user-name" id="user-name-display"></span>
+        <button class="btn-logout" onclick="seDeconnecter()" title="Changer d'utilisateur">⇄</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert-banner none" id="alert-banner" onclick="showTab('paires')">
+    <div class="alert-dot"></div>
+    <span id="alert-text">Chargement...</span>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('encoder')" id="tab-btn-encoder">Encoder</button>
+    <button class="tab" onclick="showTab('stock')" id="tab-btn-stock">Stock <span class="badge" id="badge-stock">0</span></button>
+    <button class="tab" onclick="showTab('paires')" id="tab-btn-paires">Paires <span class="badge" id="badge-paires" style="display:none">0</span></button>
+  </div>
+
+  <div class="panel active" id="panel-encoder">
+    <div class="form-card">
+      <div class="form-title">Nouveau pneu — <span id="user-label" style="color:var(--accent)"></span></div>
+      <div class="form-grid form-row2">
+        <div class="field"><label>Marque</label><select id="f-marque" onchange="onMarqueChange()"><option value="">Sélectionner...</option></select></div>
+        <div class="field"><label>Saison</label><select id="f-saison" onchange="onSaisonChange()"><option value="">Sélectionner...</option><option value="Eté">☀️ Eté</option><option value="Hiver">❄️ Hiver</option><option value="4 saisons">🔄 4 saisons</option></select></div>
+      </div>
+      <div class="form-grid" style="margin-top:14px">
+        <div class="field"><label>Modèle / Profil</label><select id="f-modele" disabled><option value="">Choisir marque + saison d'abord</option></select></div>
+      </div>
+      <div class="form-grid form-row4" style="margin-top:14px">
+        <div class="field"><label>Largeur</label><select id="f-largeur"><option value="">--</option></select></div>
+        <div class="field"><label>Hauteur</label><select id="f-hauteur"><option value="">--</option></select></div>
+        <div class="field"><label>Diamètre</label><select id="f-diametre"><option value="">--</option></select></div>
+        <div class="field"><label>Structure</label><select id="f-structure"><option value="">--</option><option value="R">R — Radial</option><option value="D">D — Diagonal</option></select></div>
+      </div>
+      <div class="form-grid form-row2" style="margin-top:14px">
+        <div class="field"><label>Indice de charge</label><select id="f-charge"><option value="">--</option></select></div>
+        <div class="field"><label>Indice de vitesse</label><select id="f-vitesse"><option value="">--</option></select></div>
+      </div>
+      <button class="btn-add" onclick="ajouterPneu()">+ Ajouter au stock</button>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-stock">
+    <div class="stock-header">
+      <div class="filter-bar" id="filter-bar">
+        <button class="filter-btn active" onclick="setFilter('tous')" id="filter-tous">Tous</button>
+        <button class="filter-btn" onclick="setFilter('moi')" id="filter-moi">Mon stock</button>
+        <button class="filter-btn" onclick="setFilter('match')" id="filter-match">✔ Avec match</button>
+      </div>
+      <div class="stock-count" id="stock-count">0 pneus</div>
+    </div>
+    <div class="stock-list" id="stock-list"><div class="empty"><div class="empty-icon">🛞</div>Chargement...</div></div>
+  </div>
+
+  <div class="panel" id="panel-paires">
+    <div class="pairs-list" id="pairs-list"><div class="empty"><div class="empty-icon">🔍</div>Chargement...</div></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API_KEY = '$2a$10$bchdxzlogv7ACQsbW4sb9.nNvlil4Wsm/7atpFq3.sPMLr4zkJxom';
+const BIN_NAME = 'JAMTIRES_STOCK';
+let BIN_ID = "69f4899a856a682189943b8c"; // ID fixe partagé
+
+const MODELES = {
+  "Michelin":{"Eté":["Pilot Sport 4","Pilot Sport 5","Primacy 4","Energy Saver+","Latitude Sport 3","e.Primacy"],"Hiver":["Alpin 6","Alpin A4","Pilot Alpin 5","Latitude Alpin LA2"],"4 saisons":["CrossClimate 2","CrossClimate+","Agilis CrossClimate"]},
+  "Continental":{"Eté":["PremiumContact 6","SportContact 7","EcoContact 6","UltraContact","ContiSportContact 5"],"Hiver":["WinterContact TS 870","WinterContact TS 860","WinterContact TS 850 P"],"4 saisons":["AllSeasonContact 2","VanContact 4Season","AllSeasonContact"]},
+  "Bridgestone":{"Eté":["Turanza T005","Potenza Sport","Potenza RE050A","Ecopia EP150","Turanza 6"],"Hiver":["Blizzak LM005","Blizzak LM001","Blizzak W810"],"4 saisons":["Weather Control A005","Duravis All Season"]},
+  "Goodyear":{"Eté":["EfficientGrip Performance 2","Eagle F1 Asymmetric 6","Eagle F1 SuperSport","EfficientGrip 2 SUV"],"Hiver":["UltraGrip Performance+","UltraGrip 9+","UltraGrip Ice 2"],"4 saisons":["Vector 4Seasons Gen-3","Vector 4Seasons Cargo"]},
+  "Pirelli":{"Eté":["P Zero","Cinturato P7","P Zero PZ4","Scorpion Verde"],"Hiver":["Winter Sottozero 3","Ice Zero 2","Scorpion Winter","Cinturato Winter 2"],"4 saisons":["Cinturato All Season SF2","Scorpion All Season SF2"]},
+  "Dunlop":{"Eté":["Sport Maxx RT2","Sport Maxx Race","BluResponse","SP Sport Maxx 060+"],"Hiver":["Winter Sport 5","SP Winter Sport 4D"],"4 saisons":["All Season Maxx","All Season 2"]},
+  "Hankook":{"Eté":["Ventus S1 evo3","Ventus Prime 4","Kinergy Eco2"],"Hiver":["Winter i*cept RS3","Winter i*Pike RS2"],"4 saisons":["Kinergy 4S2","Kinergy 4S2 X"]},
+  "Nokian":{"Eté":["Wetproof","Wetproof SUV","Powerproof"],"Hiver":["Snowproof P","Snowproof","Hakkapeliitta R5"],"4 saisons":["Seasonproof","Seasonproof SUV"]},
+  "Yokohama":{"Eté":["Advan Sport V105","BluEarth-GT AE51","Geolandar X-CV"],"Hiver":["W.drive V905","BluEarth Winter V905"],"4 saisons":["BluEarth 4S AW21","Geolandar 4S G061"]},
+  "Falken":{"Eté":["Ziex ZE914","Azenis FK520","Sincera SN110"],"Hiver":["EuroWinter HS01","EuroWinter HS02 Pro"],"4 saisons":["EuroAll Season AS210","AS220 Pro"]},
+  "Kumho":{"Eté":["Ecsta PS71","Ecsta HS52","Solus HA31"],"Hiver":["WinterCraft WP72","WinterCraft WS71"],"4 saisons":["Solus 4S HA32","CX61"]},
+  "Toyo":{"Eté":["Proxes Sport","Proxes CF2","Proxes TR1"],"Hiver":["Snowprox S954","Observe GSi6"],"4 saisons":["Celsius","Celsius AS2"]},
+  "Cooper":{"Eté":["Zeon CS8","Zeon 4XS Sport"],"Hiver":["Weathermaster SA2+","Discoverer Winter"],"4 saisons":["Discoverer All Season","Enduramax"]},
+  "Vredestein":{"Eté":["Ultrac","Ultrac Vorti"],"Hiver":["Wintrac Pro","Wintrac Xtreme S"],"4 saisons":["Quatrac Pro","Quatrac 5"]},
+  "BFGoodrich":{"Eté":["g-Force Sport Comp-2","Advantage T/A Sport"],"Hiver":["Winter T/A KSI","g-Force Winter 2"],"4 saisons":["All-Terrain T/A KO2"]},
+  "Firestone":{"Eté":["Roadhawk","Destination HP"],"Hiver":["Winterhawk 4","Winterhawk 3"],"4 saisons":["Multiseason Gen-02"]},
+  "Maxxis":{"Eté":["Premitra HP5","Victra Sport 5"],"Hiver":["Arctictrekker WP-05"],"4 saisons":["Premitra All Season AP3"]},
+  "Nexen":{"Eté":["N Fera Sport","N Blue HD Plus"],"Hiver":["Winguard Sport 2"],"4 saisons":["N Blue 4Season"]},
+  "Semperit":{"Eté":["Speed-Life 3","Comfort-Life 2"],"Hiver":["Speed-Grip 5"],"4 saisons":["All Season-Grip"]},
+  "Barum":{"Eté":["Bravuris 5HM","Pollux 3"],"Hiver":["Polaris 5"],"4 saisons":["Quartaris 5"]}
+};
+const MARQUES = Object.keys(MODELES);
+const LARGEURS=[135,145,155,165,175,185,195,205,215,225,235,245,255,265,275,285,295,305,315,325,335,345];
+const HAUTEURS=[25,30,35,40,45,50,55,60,65,70,75,80];
+const DIAMETRES=[13,14,15,16,17,18,19,20,21,22,23,24];
+const CHARGES=Array.from({length:71},(_,i)=>i+60);
+const VITESSES=["L","M","N","P","Q","R","S","T","H","V","W","Y","Z"];
+
+let utilisateurActuel = null;
+let utilisateurs = JSON.parse(localStorage.getItem('jamtires_users')||'["Brahim","Sacha","Jamal","Gabriel","Mohamed"]');
+let stock=[], pairesStatuts={}, filtre='tous';
+
+// ─── LOGIN ────────────────────────────────────────────────
+function renderLogin() {
+  const grid = document.getElementById('user-grid');
+  grid.innerHTML = utilisateurs.map(u => `
+    <button class="user-btn" onclick="selectionnerUser('${u}')" id="ubtn-${u}">
+      <div style="font-size:20px;margin-bottom:4px">${u[0].toUpperCase()}</div>
+      ${u}
+    </button>`).join('');
+}
+
+function selectionnerUser(nom) {
+  utilisateurActuel = nom;
+  document.querySelectorAll('.user-btn').forEach(b=>b.classList.remove('selected'));
+  const btn = document.getElementById('ubtn-'+nom);
+  if(btn) btn.classList.add('selected');
+  document.getElementById('btn-login').disabled = false;
+}
+
+function ajouterUtilisateur() {
+  const input = document.getElementById('new-user-input');
+  const nom = input.value.trim();
+  if(!nom) return;
+  if(utilisateurs.includes(nom)){showToast('Utilisateur déjà existant','error');return;}
+  utilisateurs.push(nom);
+  localStorage.setItem('jamtires_users', JSON.stringify(utilisateurs));
+  input.value='';
+  renderLogin();
+  selectionnerUser(nom);
+}
+
+function seConnecter() {
+  if(!utilisateurActuel) return;
+  localStorage.setItem('jamtires_current_user', utilisateurActuel);
+  document.getElementById('login-overlay').style.display='none';
+  document.getElementById('main-app').style.display='block';
+  document.getElementById('user-name-display').textContent = utilisateurActuel;
+  document.getElementById('user-avatar').textContent = utilisateurActuel[0].toUpperCase();
+  document.getElementById('user-label').textContent = utilisateurActuel;
+  initApp();
+}
+
+function seDeconnecter() {
+  utilisateurActuel = null;
+  document.getElementById('login-overlay').style.display='flex';
+  document.getElementById('main-app').style.display='none';
+  document.querySelectorAll('.user-btn').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('btn-login').disabled=true;
+}
+
+// ─── JSONBIN ──────────────────────────────────────────────
+async function initBin() {
+  setSyncStatus('syncing','Connexion...');
+  try {
+    if(BIN_ID){await chargerDonnees();return;}
+    const res = await fetch('https://api.jsonbin.io/v3/b?metadata=true',{headers:{'X-Master-Key':API_KEY,'X-Bin-Meta':true}});
+    if(res.ok){
+      const data=await res.json();
+      if(data.result){
+        const found=data.result.find(b=>b.metadata&&b.metadata.name===BIN_NAME);
+        if(found){BIN_ID=found.metadata.id;await chargerDonnees();return;}
+      }
+    }
+    const create=await fetch('https://api.jsonbin.io/v3/b',{method:'POST',headers:{'Content-Type':'application/json','X-Master-Key':API_KEY,'X-Bin-Name':BIN_NAME,'X-Bin-Private':'false'},body:JSON.stringify({stock:[],statuts:{}})});
+    const created=await create.json();
+    BIN_ID=created.metadata.id;
+    
+    setSyncStatus('ok','Connecté');render();
+  } catch(e){setSyncStatus('error','Hors ligne');render();}
+}
+
+async function chargerDonnees() {
+  if(!BIN_ID)return;
+  try{
+    const res=await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`,{headers:{'X-Master-Key':API_KEY}});
+    const data=await res.json();
+    stock=data.record.stock||[];
+    pairesStatuts=data.record.statuts||{};
+    setSyncStatus('ok','Synchronisé');render();
+  }catch(e){setSyncStatus('error','Erreur sync');}
+}
+
+async function sauvegarder() {
+  if(!BIN_ID)return;
+  setSyncStatus('syncing','Sauvegarde...');
+  try{
+    await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':API_KEY},body:JSON.stringify({stock,statuts:pairesStatuts})});
+    setSyncStatus('ok','Synchronisé');
+  }catch(e){setSyncStatus('error','Erreur sauvegarde');}
+}
+
+function setSyncStatus(state,text){document.getElementById('sync-dot').className='sync-dot '+state;document.getElementById('sync-text').textContent=text;}
+
+// ─── INIT APP ─────────────────────────────────────────────
+function initApp() {
+  peuplerSelect('f-marque',MARQUES);
+  peuplerSelect('f-largeur',LARGEURS);
+  peuplerSelect('f-hauteur',HAUTEURS);
+  peuplerSelect('f-diametre',DIAMETRES);
+  peuplerSelect('f-charge',CHARGES);
+  peuplerSelect('f-vitesse',VITESSES);
+  initBin();
+  setInterval(chargerDonnees,15000);
+}
+
+function peuplerSelect(id,vals){const sel=document.getElementById(id);vals.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;sel.appendChild(o);});}
+
+// ─── UI ───────────────────────────────────────────────────
+function showTab(t){
+  ['encoder','stock','paires'].forEach(id=>{
+    document.getElementById('panel-'+id).classList.toggle('active',id===t);
+    document.getElementById('tab-btn-'+id).classList.toggle('active',id===t);
+  });
+}
+
+function setFilter(f){
+  filtre=f;
+  ['tous','moi','match'].forEach(id=>{
+    const btn=document.getElementById('filter-'+id);
+    if(btn)btn.classList.toggle('active',id===f);
+  });
+  renderStock();
+}
+
+function onMarqueChange(){onSaisonChange();}
+function onSaisonChange(){
+  const marque=document.getElementById('f-marque').value;
+  const saison=document.getElementById('f-saison').value;
+  const sel=document.getElementById('f-modele');
+  sel.innerHTML='';sel.disabled=true;
+  if(marque&&saison&&MODELES[marque]&&MODELES[marque][saison]){
+    const o=document.createElement('option');o.value='';o.textContent='Sélectionner...';sel.appendChild(o);
+    MODELES[marque][saison].forEach(m=>{const opt=document.createElement('option');opt.value=m;opt.textContent=m;sel.appendChild(opt);});
+    sel.disabled=false;
+  }else{const o=document.createElement('option');o.value='';o.textContent="Choisir marque + saison d'abord";sel.appendChild(o);}
+}
+
+// ─── LOGIQUE ──────────────────────────────────────────────
+function getCle(p){return[p.marque,p.saison,p.modele,p.largeur,p.hauteur,p.diametre,p.structure,p.charge,p.vitesse].join('|');}
+
+function detecterPaires(){
+  const pairesMap={};
+  stock.forEach(p=>{
+    const cle=getCle(p);
+    if(!pairesMap[cle])pairesMap[cle]=[];
+    pairesMap[cle].push(p);
+  });
+  const matches=[];
+  Object.entries(pairesMap).forEach(([cle,pneus])=>{
+    const users=[...new Set(pneus.map(p=>p.utilisateur))];
+    if(users.length>1){
+      for(let i=0;i<pneus.length;i++){
+        for(let j=i+1;j<pneus.length;j++){
+          if(pneus[i].utilisateur!==pneus[j].utilisateur){
+            matches.push({pneu1:pneus[i],pneu2:pneus[j],cle:cle+'|'+pneus[i].utilisateur+'|'+pneus[j].utilisateur});
+          }
+        }
+      }
+    }
+  });
+  return matches;
+}
+
+function getMatchCles(){return new Set(detecterPaires().flatMap(p=>[getCle(p.pneu1),getCle(p.pneu2)]));}
+
+async function ajouterPneu(){
+  const vals={marque:document.getElementById('f-marque').value,saison:document.getElementById('f-saison').value,modele:document.getElementById('f-modele').value,largeur:document.getElementById('f-largeur').value,hauteur:document.getElementById('f-hauteur').value,diametre:document.getElementById('f-diametre').value,structure:document.getElementById('f-structure').value,charge:document.getElementById('f-charge').value,vitesse:document.getElementById('f-vitesse').value};
+  if(Object.values(vals).some(v=>!v)){showToast('Remplissez tous les champs','error');return;}
+  stock.push({...vals,utilisateur:utilisateurActuel,id:Date.now()});
+  render();await sauvegarder();
+  showToast('Pneu ajouté ✓','success');
+  ['f-marque','f-saison','f-largeur','f-hauteur','f-diametre','f-structure','f-charge','f-vitesse'].forEach(id=>document.getElementById(id).value='');
+  const s=document.getElementById('f-modele');s.innerHTML="<option value=''>Choisir marque + saison d'abord</option>";s.disabled=true;
+}
+
+async function supprimerPneu(id){stock=stock.filter(p=>p.id!==id);render();await sauvegarder();}
+async function validerPaire(cle,statut){pairesStatuts[cle]=statut;renderPaires();await sauvegarder();}
+
+// ─── RENDER ───────────────────────────────────────────────
+function render(){
+  const paires=detecterPaires(),matchCles=getMatchCles();
+  document.getElementById('badge-stock').textContent=stock.length;
+  const bp=document.getElementById('badge-paires');
+  if(paires.length>0){bp.style.display='';bp.textContent=paires.length;}else bp.style.display='none';
+  const banner=document.getElementById('alert-banner');
+  const nonTraitees=paires.filter(p=>!pairesStatuts[p.cle]);
+  if(nonTraitees.length>0){banner.className='alert-banner match';document.getElementById('alert-text').textContent=`⚠ ${nonTraitees.length} paire(s) trouvée(s) — Cliquez pour valider`;}
+  else if(paires.length>0){banner.className='alert-banner none';document.getElementById('alert-text').textContent=`✔ ${paires.length} paire(s) traitée(s)`;}
+  else{banner.className='alert-banner none';document.getElementById('alert-text').textContent='Aucune paire détectée pour l\'instant';}
+  renderStock(matchCles);renderPaires(paires);
+}
+
+function renderStock(matchCles){
+  if(!matchCles)matchCles=getMatchCles();
+  let items=stock;
+  if(filtre==='moi')items=stock.filter(p=>p.utilisateur===utilisateurActuel);
+  else if(filtre==='match')items=stock.filter(p=>matchCles.has(getCle(p)));
+  document.getElementById('stock-count').textContent=items.length+' pneu(s)';
+  const list=document.getElementById('stock-list');
+  if(items.length===0){list.innerHTML='<div class="empty"><div class="empty-icon">🛞</div>Aucun pneu dans cette sélection</div>';return;}
+  list.innerHTML=items.map(p=>{
+    const hm=matchCles.has(getCle(p));
+    const sp=p.saison==='Eté'?'pill-ete':p.saison==='Hiver'?'pill-hiver':'pill-4s';
+    const si=p.saison==='Eté'?'☀️':p.saison==='Hiver'?'❄️':'🔄';
+    const isMine=p.utilisateur===utilisateurActuel;
+    return`<div class="stock-item ${hm?'has-match':''}">
+      <div class="stock-item-left">
+        <div class="stock-item-brand">${p.marque} — ${p.modele}</div>
+        <div class="stock-item-specs">${p.largeur}/${p.hauteur} ${p.structure}${p.diametre} · ${p.charge}${p.vitesse}</div>
+        <div class="stock-item-user">encodé par ${p.utilisateur}</div>
+      </div>
+      <div class="stock-item-right">
+        <span class="pill ${sp}">${si} ${p.saison}</span>
+        <span class="pill pill-user">${p.utilisateur[0].toUpperCase()}</span>
+        ${hm?'<span class="pill pill-match">✔ match</span>':''}
+        ${isMine?`<button class="btn-del" onclick="supprimerPneu(${p.id})">✕</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderPaires(paires){
+  if(!paires)paires=detecterPaires();
+  const list=document.getElementById('pairs-list');
+  if(paires.length===0){list.innerHTML='<div class="empty"><div class="empty-icon">🔍</div>Aucune paire détectée — encodez des pneus identiques avec deux utilisateurs différents</div>';return;}
+  list.innerHTML=paires.map(pair=>{
+    const p=pair.pneu1,statut=pairesStatuts[pair.cle];
+    const cc=statut==='validée'?'validated':statut==='rejetée'?'rejected':'';
+    const si=p.saison==='Eté'?'☀️':p.saison==='Hiver'?'❄️':'🔄';
+    const ce=pair.cle.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    return`<div class="pair-card ${cc}">
+      <div class="pair-top">
+        <div>
+          <div class="pair-brand">${p.marque} — ${p.modele} <span style="font-weight:400;color:var(--text2);font-size:13px">${si} ${p.saison}</span></div>
+          <div class="pair-specs">${p.largeur}/${p.hauteur} ${p.structure}${p.diametre} · ${p.charge}${p.vitesse}</div>
+        </div>
+        ${statut?`<span class="pill ${statut==='validée'?'pill-match':''}" style="${statut==='rejetée'?'background:rgba(240,96,96,0.1);color:var(--danger);border:1px solid rgba(240,96,96,0.3)':''}">${statut==='validée'?'✔ Validée':'✗ Rejetée'}</span>`:''}
+      </div>
+      <div class="pair-locations">
+        <div class="pair-loc">👤 ${pair.pneu1.utilisateur}</div>
+        <div class="pair-loc">👤 ${pair.pneu2.utilisateur}</div>
+      </div>
+      <div class="pair-actions">
+        <button class="btn-validate ${statut==='validée'?'active':''}" onclick="validerPaire('${ce}','validée')">✔ Valider</button>
+        <button class="btn-reject ${statut==='rejetée'?'active':''}" onclick="validerPaire('${ce}','rejetée')">✗ Rejeter</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function showToast(msg,type){const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+(type||'');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+// ─── DÉMARRAGE ────────────────────────────────────────────
+const savedUser = localStorage.getItem('jamtires_current_user');
+renderLogin();
+if(savedUser){
+  utilisateurActuel=savedUser;
+  seConnecter();
+}
+</script>
+</body>
+</html>
+
 :root{--bg:#0e0f11;--surface:#16181c;--surface2:#1e2026;--border:#2a2d35;--accent:#f0c040;--accent2:#4fc8a0;--danger:#f06060;--text:#e8eaf0;--text2:#8a8fa0;--text3:#555a6a;--radius:10px;--font-display:'Syne',sans-serif;--font-mono:'DM Mono',monospace}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--font-display);min-height:100vh;overflow-x:hidden}
