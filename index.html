@@ -6,11 +6,33 @@
 <title>JAMTIRES — Pairing</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0e0f11;--surface:#16181c;--surface2:#1e2026;--border:#2a2d35;--accent:#f0c040;--accent2:#4fc8a0;--danger:#f06060;--be:#4a9eff;--fr:#ff6b6b;--text:#e8eaf0;--text2:#8a8fa0;--text3:#555a6a;--radius:10px;--font-display:'Syne',sans-serif;--font-mono:'DM Mono',monospace}
+:root{--bg:#0e0f11;--surface:#16181c;--surface2:#1e2026;--border:#2a2d35;--accent:#f0c040;--accent2:#4fc8a0;--danger:#f06060;--text:#e8eaf0;--text2:#8a8fa0;--text3:#555a6a;--radius:10px;--font-display:'Syne',sans-serif;--font-mono:'DM Mono',monospace}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--font-display);min-height:100vh;overflow-x:hidden}
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(240,192,64,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(240,192,64,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
 .app{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:24px 16px 60px}
+
+/* LOGIN */
+.login-overlay{position:fixed;inset:0;background:var(--bg);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px 32px;width:100%;max-width:400px;text-align:center}
+.login-logo{font-size:28px;font-weight:800;color:var(--accent);margin-bottom:6px}
+.login-sub{font-size:13px;color:var(--text2);margin-bottom:32px}
+.login-title{font-size:14px;font-weight:600;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:16px}
+.user-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.user-btn{padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:var(--font-display);font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s}
+.user-btn:hover{border-color:var(--accent);color:var(--accent)}
+.user-btn.selected{background:rgba(240,192,64,0.1);border-color:var(--accent);color:var(--accent)}
+.divider{display:flex;align-items:center;gap:10px;margin-bottom:16px;color:var(--text3);font-size:12px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.new-user-row{display:flex;gap:8px}
+.new-user-input{flex:1;height:40px;padding:0 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-display);font-size:13px}
+.new-user-input:focus{outline:none;border-color:var(--accent)}
+.btn-add-user{height:40px;padding:0 16px;background:var(--accent);color:var(--bg);border:none;border-radius:8px;font-family:var(--font-display);font-size:13px;font-weight:700;cursor:pointer}
+.btn-login{width:100%;height:44px;margin-top:20px;background:var(--accent);color:var(--bg);border:none;border-radius:8px;font-family:var(--font-display);font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s}
+.btn-login:hover{background:#f5d060}
+.btn-login:disabled{opacity:0.3;cursor:not-allowed}
+
+/* HEADER */
 .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;padding-bottom:20px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:12px}
 .logo{font-size:22px;font-weight:800;letter-spacing:-0.5px;color:var(--accent)}
 .logo span{color:var(--text2);font-weight:400;font-size:13px;display:block;letter-spacing:0.5px;margin-top:2px}
@@ -20,10 +42,12 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .sync-dot.ok{background:var(--accent2)}
 .sync-dot.syncing{background:var(--accent);animation:blink 0.8s infinite}
 .sync-dot.error{background:var(--danger)}
-.country-toggle{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.country-btn{padding:8px 20px;font-family:var(--font-display);font-size:13px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--text2);transition:all 0.2s;letter-spacing:0.5px}
-.country-btn.active-be{background:var(--be);color:#fff}
-.country-btn.active-fr{background:var(--fr);color:#fff}
+.user-badge{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:6px 14px}
+.user-avatar{width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--bg);font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.user-name{font-size:13px;font-weight:600;color:var(--text)}
+.btn-logout{background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:18px;line-height:1;padding:0 0 0 4px}
+.btn-logout:hover{color:var(--danger)}
+
 .alert-banner{border-radius:var(--radius);padding:14px 20px;margin-bottom:24px;display:flex;align-items:center;gap:12px;font-size:14px;font-weight:600;border:1px solid;transition:all 0.4s;cursor:pointer}
 .alert-banner.none{background:var(--surface);border-color:var(--border);color:var(--text3)}
 .alert-banner.match{background:rgba(240,192,64,0.1);border-color:var(--accent);color:var(--accent);animation:pulse-border 2s ease-in-out infinite}
@@ -31,11 +55,13 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .alert-dot{width:10px;height:10px;border-radius:50%;background:currentColor;flex-shrink:0}
 .alert-banner.match .alert-dot{animation:blink 1s ease-in-out infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+
 .tabs{display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:4px;margin-bottom:24px}
 .tab{flex:1;padding:9px;font-family:var(--font-display);font-size:13px;font-weight:600;border:none;border-radius:7px;cursor:pointer;background:transparent;color:var(--text2);transition:all 0.2s;letter-spacing:0.3px}
 .tab.active{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
 .tab .badge{display:inline-block;background:var(--accent);color:var(--bg);font-size:10px;font-weight:700;border-radius:10px;padding:1px 6px;margin-left:6px}
 .panel{display:none}.panel.active{display:block}
+
 .form-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
 .form-title{font-size:13px;font-weight:600;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:20px}
 .form-grid{display:grid;gap:14px}
@@ -48,6 +74,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .field select:disabled{opacity:0.3;cursor:not-allowed}
 .btn-add{width:100%;height:44px;margin-top:8px;background:var(--accent);color:var(--bg);border:none;border-radius:8px;font-family:var(--font-display);font-size:14px;font-weight:700;cursor:pointer;letter-spacing:0.5px;transition:all 0.2s}
 .btn-add:hover{background:#f5d060;transform:translateY(-1px)}
+
 .stock-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px}
 .stock-count{font-size:12px;color:var(--text2);font-family:var(--font-mono)}
 .stock-list{display:flex;flex-direction:column;gap:8px}
@@ -56,16 +83,17 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .stock-item-left{flex:1;min-width:0}
 .stock-item-brand{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
 .stock-item-specs{font-family:var(--font-mono);font-size:11px;color:var(--text2)}
+.stock-item-user{font-size:11px;color:var(--text3);margin-top:3px}
 .stock-item-right{display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end}
 .pill{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:0.5px}
-.pill-be{background:rgba(74,158,255,0.15);color:var(--be);border:1px solid rgba(74,158,255,0.3)}
-.pill-fr{background:rgba(255,107,107,0.15);color:var(--fr);border:1px solid rgba(255,107,107,0.3)}
+.pill-user{background:rgba(240,192,64,0.1);color:var(--accent);border:1px solid rgba(240,192,64,0.2)}
 .pill-ete{background:rgba(240,192,64,0.1);color:var(--accent);border:1px solid rgba(240,192,64,0.2)}
 .pill-hiver{background:rgba(100,160,255,0.1);color:#88aaff;border:1px solid rgba(100,160,255,0.2)}
 .pill-4s{background:rgba(79,200,160,0.1);color:var(--accent2);border:1px solid rgba(79,200,160,0.2)}
 .pill-match{background:rgba(79,200,160,0.15);color:var(--accent2);border:1px solid rgba(79,200,160,0.3)}
 .btn-del{width:28px;height:28px;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--text3);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0}
 .btn-del:hover{border-color:var(--danger);color:var(--danger)}
+
 .pairs-list{display:flex;flex-direction:column;gap:12px}
 .pair-card{background:var(--surface);border:1px solid var(--accent);border-radius:var(--radius);padding:16px 18px;position:relative;overflow:hidden}
 .pair-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent)}
@@ -75,15 +103,14 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .pair-brand{font-size:15px;font-weight:700}
 .pair-specs{font-family:var(--font-mono);font-size:12px;color:var(--text2);margin-top:3px}
 .pair-locations{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
-.pair-loc{font-family:var(--font-mono);font-size:11px;padding:5px 10px;border-radius:6px;border:1px solid var(--border);color:var(--text2)}
-.pair-loc.be{border-color:rgba(74,158,255,0.4);color:var(--be);background:rgba(74,158,255,0.08)}
-.pair-loc.fr{border-color:rgba(255,107,107,0.4);color:var(--fr);background:rgba(255,107,107,0.08)}
+.pair-loc{font-family:var(--font-mono);font-size:11px;padding:5px 10px;border-radius:6px;border:1px solid var(--border);color:var(--text2);background:var(--surface2)}
 .pair-actions{display:flex;gap:8px}
 .btn-validate,.btn-reject{flex:1;height:34px;border-radius:7px;font-family:var(--font-display);font-size:12px;font-weight:700;cursor:pointer;border:1px solid;letter-spacing:0.3px;transition:all 0.2s}
 .btn-validate{background:rgba(79,200,160,0.1);color:var(--accent2);border-color:rgba(79,200,160,0.3)}
 .btn-validate:hover,.btn-validate.active{background:var(--accent2);color:var(--bg)}
 .btn-reject{background:rgba(240,96,96,0.1);color:var(--danger);border-color:rgba(240,96,96,0.3)}
 .btn-reject:hover,.btn-reject.active{background:var(--danger);color:#fff}
+
 .empty{text-align:center;padding:48px 24px;color:var(--text3);font-size:13px}
 .empty-icon{font-size:32px;margin-bottom:12px}
 .filter-bar{display:flex;gap:8px;flex-wrap:wrap}
@@ -96,21 +123,40 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 </style>
 </head>
 <body>
-<div class="app">
+
+<!-- LOGIN -->
+<div class="login-overlay" id="login-overlay">
+  <div class="login-box">
+    <div class="login-logo">JAMTIRES</div>
+    <div class="login-sub">Système de pairing — Benelux</div>
+    <div class="login-title">Qui êtes-vous ?</div>
+    <div class="user-grid" id="user-grid"></div>
+    <div class="divider">ou</div>
+    <div class="new-user-row">
+      <input class="new-user-input" id="new-user-input" type="text" placeholder="Ajouter un utilisateur..." maxlength="20">
+      <button class="btn-add-user" onclick="ajouterUtilisateur()">+</button>
+    </div>
+    <button class="btn-login" id="btn-login" onclick="seConnecter()" disabled>Continuer →</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="main-app" style="display:none">
   <div class="header">
     <div class="logo">JAMTIRES<span>SYSTÈME DE PAIRING — BENELUX</span></div>
     <div class="header-right">
       <div class="sync-status"><div class="sync-dot syncing" id="sync-dot"></div><span id="sync-text">Connexion...</span></div>
-      <div class="country-toggle">
-        <button class="country-btn active-be" id="btn-be" onclick="setCountry('BE')">🇧🇪 BE</button>
-        <button class="country-btn" id="btn-fr" onclick="setCountry('FR')">🇫🇷 FR</button>
+      <div class="user-badge">
+        <div class="user-avatar" id="user-avatar"></div>
+        <span class="user-name" id="user-name-display"></span>
+        <button class="btn-logout" onclick="seDeconnecter()" title="Changer d'utilisateur">⇄</button>
       </div>
     </div>
   </div>
 
   <div class="alert-banner none" id="alert-banner" onclick="showTab('paires')">
     <div class="alert-dot"></div>
-    <span id="alert-text">Chargement des données...</span>
+    <span id="alert-text">Chargement...</span>
   </div>
 
   <div class="tabs">
@@ -121,7 +167,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
   <div class="panel active" id="panel-encoder">
     <div class="form-card">
-      <div class="form-title">Nouveau pneu — <span id="country-label" style="color:var(--be)">Belgique</span></div>
+      <div class="form-title">Nouveau pneu — <span id="user-label" style="color:var(--accent)"></span></div>
       <div class="form-grid form-row2">
         <div class="field"><label>Marque</label><select id="f-marque" onchange="onMarqueChange()"><option value="">Sélectionner...</option></select></div>
         <div class="field"><label>Saison</label><select id="f-saison" onchange="onSaisonChange()"><option value="">Sélectionner...</option><option value="Eté">☀️ Eté</option><option value="Hiver">❄️ Hiver</option><option value="4 saisons">🔄 4 saisons</option></select></div>
@@ -145,10 +191,9 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
   <div class="panel" id="panel-stock">
     <div class="stock-header">
-      <div class="filter-bar">
+      <div class="filter-bar" id="filter-bar">
         <button class="filter-btn active" onclick="setFilter('tous')" id="filter-tous">Tous</button>
-        <button class="filter-btn" onclick="setFilter('BE')" id="filter-BE">🇧🇪 Belgique</button>
-        <button class="filter-btn" onclick="setFilter('FR')" id="filter-FR">🇫🇷 France</button>
+        <button class="filter-btn" onclick="setFilter('moi')" id="filter-moi">Mon stock</button>
         <button class="filter-btn" onclick="setFilter('match')" id="filter-match">✔ Avec match</button>
       </div>
       <div class="stock-count" id="stock-count">0 pneus</div>
@@ -160,6 +205,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     <div class="pairs-list" id="pairs-list"><div class="empty"><div class="empty-icon">🔍</div>Chargement...</div></div>
   </div>
 </div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -167,7 +213,6 @@ const API_KEY = '$2a$10$bchdxzlogv7ACQsbW4sb9.nNvlil4Wsm/7atpFq3.sPMLr4zkJxom';
 const BIN_NAME = 'JAMTIRES_STOCK';
 let BIN_ID = localStorage.getItem('jamtires_bin_id') || null;
 
-const MARQUES = ["Michelin","Continental","Bridgestone","Goodyear","Pirelli","Dunlop","Hankook","Nokian","Yokohama","Falken","Kumho","Toyo","Cooper","Vredestein","BFGoodrich","Firestone","Maxxis","Nexen","Semperit","Barum"];
 const MODELES = {
   "Michelin":{"Eté":["Pilot Sport 4","Pilot Sport 5","Primacy 4","Energy Saver+","Latitude Sport 3","e.Primacy"],"Hiver":["Alpin 6","Alpin A4","Pilot Alpin 5","Latitude Alpin LA2"],"4 saisons":["CrossClimate 2","CrossClimate+","Agilis CrossClimate"]},
   "Continental":{"Eté":["PremiumContact 6","SportContact 7","EcoContact 6","UltraContact","ContiSportContact 5"],"Hiver":["WinterContact TS 870","WinterContact TS 860","WinterContact TS 850 P"],"4 saisons":["AllSeasonContact 2","VanContact 4Season","AllSeasonContact"]},
@@ -190,76 +235,111 @@ const MODELES = {
   "Semperit":{"Eté":["Speed-Life 3","Comfort-Life 2"],"Hiver":["Speed-Grip 5"],"4 saisons":["All Season-Grip"]},
   "Barum":{"Eté":["Bravuris 5HM","Pollux 3"],"Hiver":["Polaris 5"],"4 saisons":["Quartaris 5"]}
 };
+const MARQUES = Object.keys(MODELES);
 const LARGEURS=[135,145,155,165,175,185,195,205,215,225,235,245,255,265,275,285,295,305,315,325,335,345];
 const HAUTEURS=[25,30,35,40,45,50,55,60,65,70,75,80];
 const DIAMETRES=[13,14,15,16,17,18,19,20,21,22,23,24];
 const CHARGES=Array.from({length:71},(_,i)=>i+60);
 const VITESSES=["L","M","N","P","Q","R","S","T","H","V","W","Y","Z"];
 
-let pays='BE', stock=[], pairesStatuts={}, filtre='tous';
+let utilisateurActuel = null;
+let utilisateurs = JSON.parse(localStorage.getItem('jamtires_users')||'["Brahim","Sacha","Jamal","Gabriel","Mohamed"]');
+let stock=[], pairesStatuts={}, filtre='tous';
 
-// ─── JSONBIN ───────────────────────────────────────────────
+// ─── LOGIN ────────────────────────────────────────────────
+function renderLogin() {
+  const grid = document.getElementById('user-grid');
+  grid.innerHTML = utilisateurs.map(u => `
+    <button class="user-btn" onclick="selectionnerUser('${u}')" id="ubtn-${u}">
+      <div style="font-size:20px;margin-bottom:4px">${u[0].toUpperCase()}</div>
+      ${u}
+    </button>`).join('');
+}
+
+function selectionnerUser(nom) {
+  utilisateurActuel = nom;
+  document.querySelectorAll('.user-btn').forEach(b=>b.classList.remove('selected'));
+  const btn = document.getElementById('ubtn-'+nom);
+  if(btn) btn.classList.add('selected');
+  document.getElementById('btn-login').disabled = false;
+}
+
+function ajouterUtilisateur() {
+  const input = document.getElementById('new-user-input');
+  const nom = input.value.trim();
+  if(!nom) return;
+  if(utilisateurs.includes(nom)){showToast('Utilisateur déjà existant','error');return;}
+  utilisateurs.push(nom);
+  localStorage.setItem('jamtires_users', JSON.stringify(utilisateurs));
+  input.value='';
+  renderLogin();
+  selectionnerUser(nom);
+}
+
+function seConnecter() {
+  if(!utilisateurActuel) return;
+  localStorage.setItem('jamtires_current_user', utilisateurActuel);
+  document.getElementById('login-overlay').style.display='none';
+  document.getElementById('main-app').style.display='block';
+  document.getElementById('user-name-display').textContent = utilisateurActuel;
+  document.getElementById('user-avatar').textContent = utilisateurActuel[0].toUpperCase();
+  document.getElementById('user-label').textContent = utilisateurActuel;
+  initApp();
+}
+
+function seDeconnecter() {
+  utilisateurActuel = null;
+  document.getElementById('login-overlay').style.display='flex';
+  document.getElementById('main-app').style.display='none';
+  document.querySelectorAll('.user-btn').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('btn-login').disabled=true;
+}
+
+// ─── JSONBIN ──────────────────────────────────────────────
 async function initBin() {
   setSyncStatus('syncing','Connexion...');
   try {
-    if (BIN_ID) { await chargerDonnees(); return; }
-    // Chercher bin existant
-    const res = await fetch('https://api.jsonbin.io/v3/b?metadata=true', {
-      headers:{'X-Master-Key':API_KEY,'X-Bin-Meta':true}
-    });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.result) {
-        const found = data.result.find(b=>b.metadata&&b.metadata.name===BIN_NAME);
-        if (found) { BIN_ID=found.metadata.id; localStorage.setItem('jamtires_bin_id',BIN_ID); await chargerDonnees(); return; }
+    if(BIN_ID){await chargerDonnees();return;}
+    const res = await fetch('https://api.jsonbin.io/v3/b?metadata=true',{headers:{'X-Master-Key':API_KEY,'X-Bin-Meta':true}});
+    if(res.ok){
+      const data=await res.json();
+      if(data.result){
+        const found=data.result.find(b=>b.metadata&&b.metadata.name===BIN_NAME);
+        if(found){BIN_ID=found.metadata.id;localStorage.setItem('jamtires_bin_id',BIN_ID);await chargerDonnees();return;}
       }
     }
-    // Créer bin
-    const create = await fetch('https://api.jsonbin.io/v3/b',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','X-Master-Key':API_KEY,'X-Bin-Name':BIN_NAME,'X-Bin-Private':'false'},
-      body:JSON.stringify({stock:[],statuts:{}})
-    });
-    const created = await create.json();
-    BIN_ID = created.metadata.id;
+    const create=await fetch('https://api.jsonbin.io/v3/b',{method:'POST',headers:{'Content-Type':'application/json','X-Master-Key':API_KEY,'X-Bin-Name':BIN_NAME,'X-Bin-Private':'false'},body:JSON.stringify({stock:[],statuts:{}})});
+    const created=await create.json();
+    BIN_ID=created.metadata.id;
     localStorage.setItem('jamtires_bin_id',BIN_ID);
-    setSyncStatus('ok','Connecté');
-    render();
-  } catch(e) { setSyncStatus('error','Hors ligne'); render(); }
+    setSyncStatus('ok','Connecté');render();
+  } catch(e){setSyncStatus('error','Hors ligne');render();}
 }
 
 async function chargerDonnees() {
-  if (!BIN_ID) return;
-  try {
-    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`,{headers:{'X-Master-Key':API_KEY}});
-    const data = await res.json();
-    stock = data.record.stock||[];
-    pairesStatuts = data.record.statuts||{};
-    setSyncStatus('ok','Synchronisé');
-    render();
-  } catch(e) { setSyncStatus('error','Erreur sync'); }
+  if(!BIN_ID)return;
+  try{
+    const res=await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`,{headers:{'X-Master-Key':API_KEY}});
+    const data=await res.json();
+    stock=data.record.stock||[];
+    pairesStatuts=data.record.statuts||{};
+    setSyncStatus('ok','Synchronisé');render();
+  }catch(e){setSyncStatus('error','Erreur sync');}
 }
 
 async function sauvegarder() {
-  if (!BIN_ID) return;
+  if(!BIN_ID)return;
   setSyncStatus('syncing','Sauvegarde...');
-  try {
-    await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`,{
-      method:'PUT',
-      headers:{'Content-Type':'application/json','X-Master-Key':API_KEY},
-      body:JSON.stringify({stock,statuts:pairesStatuts})
-    });
+  try{
+    await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':API_KEY},body:JSON.stringify({stock,statuts:pairesStatuts})});
     setSyncStatus('ok','Synchronisé');
-  } catch(e) { setSyncStatus('error','Erreur sauvegarde'); }
+  }catch(e){setSyncStatus('error','Erreur sauvegarde');}
 }
 
-function setSyncStatus(state,text) {
-  document.getElementById('sync-dot').className='sync-dot '+state;
-  document.getElementById('sync-text').textContent=text;
-}
+function setSyncStatus(state,text){document.getElementById('sync-dot').className='sync-dot '+state;document.getElementById('sync-text').textContent=text;}
 
-// ─── INIT ─────────────────────────────────────────────────
-function init() {
+// ─── INIT APP ─────────────────────────────────────────────
+function initApp() {
   peuplerSelect('f-marque',MARQUES);
   peuplerSelect('f-largeur',LARGEURS);
   peuplerSelect('f-hauteur',HAUTEURS);
@@ -270,64 +350,71 @@ function init() {
   setInterval(chargerDonnees,15000);
 }
 
-function peuplerSelect(id,vals) {
-  const sel=document.getElementById(id);
-  vals.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;sel.appendChild(o);});
-}
+function peuplerSelect(id,vals){const sel=document.getElementById(id);vals.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;sel.appendChild(o);});}
 
 // ─── UI ───────────────────────────────────────────────────
-function setCountry(p) {
-  pays=p;
-  document.getElementById('btn-be').className='country-btn'+(p==='BE'?' active-be':'');
-  document.getElementById('btn-fr').className='country-btn'+(p==='FR'?' active-fr':'');
-  const lbl=document.getElementById('country-label');
-  lbl.textContent=p==='BE'?'Belgique':'France';
-  lbl.style.color=p==='BE'?'var(--be)':'var(--fr)';
-}
-
-function showTab(t) {
+function showTab(t){
   ['encoder','stock','paires'].forEach(id=>{
     document.getElementById('panel-'+id).classList.toggle('active',id===t);
     document.getElementById('tab-btn-'+id).classList.toggle('active',id===t);
   });
 }
 
-function setFilter(f) {
+function setFilter(f){
   filtre=f;
-  ['tous','BE','FR','match'].forEach(id=>document.getElementById('filter-'+id).classList.toggle('active',id===f));
+  ['tous','moi','match'].forEach(id=>{
+    const btn=document.getElementById('filter-'+id);
+    if(btn)btn.classList.toggle('active',id===f);
+  });
   renderStock();
 }
 
 function onMarqueChange(){onSaisonChange();}
-function onSaisonChange() {
+function onSaisonChange(){
   const marque=document.getElementById('f-marque').value;
   const saison=document.getElementById('f-saison').value;
   const sel=document.getElementById('f-modele');
   sel.innerHTML='';sel.disabled=true;
-  if(marque&&saison&&MODELES[marque]&&MODELES[marque][saison]) {
+  if(marque&&saison&&MODELES[marque]&&MODELES[marque][saison]){
     const o=document.createElement('option');o.value='';o.textContent='Sélectionner...';sel.appendChild(o);
     MODELES[marque][saison].forEach(m=>{const opt=document.createElement('option');opt.value=m;opt.textContent=m;sel.appendChild(opt);});
     sel.disabled=false;
-  } else {
-    const o=document.createElement('option');o.value='';o.textContent="Choisir marque + saison d'abord";sel.appendChild(o);
-  }
+  }else{const o=document.createElement('option');o.value='';o.textContent="Choisir marque + saison d'abord";sel.appendChild(o);}
 }
 
 // ─── LOGIQUE ──────────────────────────────────────────────
 function getCle(p){return[p.marque,p.saison,p.modele,p.largeur,p.hauteur,p.diametre,p.structure,p.charge,p.vitesse].join('|');}
-function detecterPaires() {
-  const be=stock.filter(p=>p.pays==='BE'),fr=stock.filter(p=>p.pays==='FR'),matches=[];
-  be.forEach(b=>fr.forEach(f=>{if(getCle(b)===getCle(f))matches.push({pneu_be:b,pneu_fr:f,cle:getCle(b)});}));
+
+function detecterPaires(){
+  const pairesMap={};
+  stock.forEach(p=>{
+    const cle=getCle(p);
+    if(!pairesMap[cle])pairesMap[cle]=[];
+    pairesMap[cle].push(p);
+  });
+  const matches=[];
+  Object.entries(pairesMap).forEach(([cle,pneus])=>{
+    const users=[...new Set(pneus.map(p=>p.utilisateur))];
+    if(users.length>1){
+      for(let i=0;i<pneus.length;i++){
+        for(let j=i+1;j<pneus.length;j++){
+          if(pneus[i].utilisateur!==pneus[j].utilisateur){
+            matches.push({pneu1:pneus[i],pneu2:pneus[j],cle:cle+'|'+pneus[i].utilisateur+'|'+pneus[j].utilisateur});
+          }
+        }
+      }
+    }
+  });
   return matches;
 }
-function getMatchCles(){return new Set(detecterPaires().map(p=>p.cle));}
 
-async function ajouterPneu() {
+function getMatchCles(){return new Set(detecterPaires().flatMap(p=>[getCle(p.pneu1),getCle(p.pneu2)]));}
+
+async function ajouterPneu(){
   const vals={marque:document.getElementById('f-marque').value,saison:document.getElementById('f-saison').value,modele:document.getElementById('f-modele').value,largeur:document.getElementById('f-largeur').value,hauteur:document.getElementById('f-hauteur').value,diametre:document.getElementById('f-diametre').value,structure:document.getElementById('f-structure').value,charge:document.getElementById('f-charge').value,vitesse:document.getElementById('f-vitesse').value};
   if(Object.values(vals).some(v=>!v)){showToast('Remplissez tous les champs','error');return;}
-  stock.push({...vals,pays,id:Date.now()});
-  render();
-  await sauvegarder();
+  stock.push({...vals,utilisateur:utilisateurActuel,id:Date.now()});
+  render();await sauvegarder();
   showToast('Pneu ajouté ✓','success');
   ['f-marque','f-saison','f-largeur','f-hauteur','f-diametre','f-structure','f-charge','f-vitesse'].forEach(id=>document.getElementById(id).value='');
   const s=document.getElementById('f-modele');s.innerHTML="<option value=''>Choisir marque + saison d'abord</option>";s.disabled=true;
@@ -337,7 +424,7 @@ async function supprimerPneu(id){stock=stock.filter(p=>p.id!==id);render();await
 async function validerPaire(cle,statut){pairesStatuts[cle]=statut;renderPaires();await sauvegarder();}
 
 // ─── RENDER ───────────────────────────────────────────────
-function render() {
+function render(){
   const paires=detecterPaires(),matchCles=getMatchCles();
   document.getElementById('badge-stock').textContent=stock.length;
   const bp=document.getElementById('badge-paires');
@@ -350,11 +437,10 @@ function render() {
   renderStock(matchCles);renderPaires(paires);
 }
 
-function renderStock(matchCles) {
+function renderStock(matchCles){
   if(!matchCles)matchCles=getMatchCles();
   let items=stock;
-  if(filtre==='BE')items=stock.filter(p=>p.pays==='BE');
-  else if(filtre==='FR')items=stock.filter(p=>p.pays==='FR');
+  if(filtre==='moi')items=stock.filter(p=>p.utilisateur===utilisateurActuel);
   else if(filtre==='match')items=stock.filter(p=>matchCles.has(getCle(p)));
   document.getElementById('stock-count').textContent=items.length+' pneu(s)';
   const list=document.getElementById('stock-list');
@@ -363,26 +449,61 @@ function renderStock(matchCles) {
     const hm=matchCles.has(getCle(p));
     const sp=p.saison==='Eté'?'pill-ete':p.saison==='Hiver'?'pill-hiver':'pill-4s';
     const si=p.saison==='Eté'?'☀️':p.saison==='Hiver'?'❄️':'🔄';
-    return`<div class="stock-item ${hm?'has-match':''}"><div class="stock-item-left"><div class="stock-item-brand">${p.marque} — ${p.modele}</div><div class="stock-item-specs">${p.largeur}/${p.hauteur} ${p.structure}${p.diametre} · ${p.charge}${p.vitesse}</div></div><div class="stock-item-right"><span class="pill ${sp}">${si} ${p.saison}</span><span class="pill pill-${p.pays.toLowerCase()}">${p.pays==='BE'?'🇧🇪':'🇫🇷'} ${p.pays}</span>${hm?'<span class="pill pill-match">✔ match</span>':''}<button class="btn-del" onclick="supprimerPneu(${p.id})">✕</button></div></div>`;
+    const isMine=p.utilisateur===utilisateurActuel;
+    return`<div class="stock-item ${hm?'has-match':''}">
+      <div class="stock-item-left">
+        <div class="stock-item-brand">${p.marque} — ${p.modele}</div>
+        <div class="stock-item-specs">${p.largeur}/${p.hauteur} ${p.structure}${p.diametre} · ${p.charge}${p.vitesse}</div>
+        <div class="stock-item-user">encodé par ${p.utilisateur}</div>
+      </div>
+      <div class="stock-item-right">
+        <span class="pill ${sp}">${si} ${p.saison}</span>
+        <span class="pill pill-user">${p.utilisateur[0].toUpperCase()}</span>
+        ${hm?'<span class="pill pill-match">✔ match</span>':''}
+        ${isMine?`<button class="btn-del" onclick="supprimerPneu(${p.id})">✕</button>`:''}
+      </div>
+    </div>`;
   }).join('');
 }
 
-function renderPaires(paires) {
+function renderPaires(paires){
   if(!paires)paires=detecterPaires();
   const list=document.getElementById('pairs-list');
-  if(paires.length===0){list.innerHTML='<div class="empty"><div class="empty-icon">🔍</div>Aucune paire détectée — encodez des pneus identiques des deux côtés</div>';return;}
+  if(paires.length===0){list.innerHTML='<div class="empty"><div class="empty-icon">🔍</div>Aucune paire détectée — encodez des pneus identiques avec deux utilisateurs différents</div>';return;}
   list.innerHTML=paires.map(pair=>{
-    const p=pair.pneu_be,statut=pairesStatuts[pair.cle];
+    const p=pair.pneu1,statut=pairesStatuts[pair.cle];
     const cc=statut==='validée'?'validated':statut==='rejetée'?'rejected':'';
     const si=p.saison==='Eté'?'☀️':p.saison==='Hiver'?'❄️':'🔄';
     const ce=pair.cle.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-    return`<div class="pair-card ${cc}"><div class="pair-top"><div><div class="pair-brand">${p.marque} — ${p.modele} <span style="font-weight:400;color:var(--text2);font-size:13px">${si} ${p.saison}</span></div><div class="pair-specs">${p.largeur}/${p.hauteur} ${p.structure}${p.diametre} · ${p.charge}${p.vitesse}</div></div>${statut?`<span class="pill ${statut==='validée'?'pill-match':''}" style="${statut==='rejetée'?'background:rgba(240,96,96,0.1);color:var(--danger);border:1px solid rgba(240,96,96,0.3)':''}">${statut==='validée'?'✔ Validée':'✗ Rejetée'}</span>`:''}</div><div class="pair-locations"><div class="pair-loc be">🇧🇪 Belgique</div><div class="pair-loc fr">🇫🇷 France</div></div><div class="pair-actions"><button class="btn-validate ${statut==='validée'?'active':''}" onclick="validerPaire('${ce}','validée')">✔ Valider</button><button class="btn-reject ${statut==='rejetée'?'active':''}" onclick="validerPaire('${ce}','rejetée')">✗ Rejeter</button></div></div>`;
+    return`<div class="pair-card ${cc}">
+      <div class="pair-top">
+        <div>
+          <div class="pair-brand">${p.marque} — ${p.modele} <span style="font-weight:400;color:var(--text2);font-size:13px">${si} ${p.saison}</span></div>
+          <div class="pair-specs">${p.largeur}/${p.hauteur} ${p.structure}${p.diametre} · ${p.charge}${p.vitesse}</div>
+        </div>
+        ${statut?`<span class="pill ${statut==='validée'?'pill-match':''}" style="${statut==='rejetée'?'background:rgba(240,96,96,0.1);color:var(--danger);border:1px solid rgba(240,96,96,0.3)':''}">${statut==='validée'?'✔ Validée':'✗ Rejetée'}</span>`:''}
+      </div>
+      <div class="pair-locations">
+        <div class="pair-loc">👤 ${pair.pneu1.utilisateur}</div>
+        <div class="pair-loc">👤 ${pair.pneu2.utilisateur}</div>
+      </div>
+      <div class="pair-actions">
+        <button class="btn-validate ${statut==='validée'?'active':''}" onclick="validerPaire('${ce}','validée')">✔ Valider</button>
+        <button class="btn-reject ${statut==='rejetée'?'active':''}" onclick="validerPaire('${ce}','rejetée')">✗ Rejeter</button>
+      </div>
+    </div>`;
   }).join('');
 }
 
 function showToast(msg,type){const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+(type||'');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 
-init();
+// ─── DÉMARRAGE ────────────────────────────────────────────
+const savedUser = localStorage.getItem('jamtires_current_user');
+renderLogin();
+if(savedUser){
+  utilisateurActuel=savedUser;
+  seConnecter();
+}
 </script>
 </body>
 </html>
